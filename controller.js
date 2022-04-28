@@ -15,7 +15,7 @@ function operate (op, numA, numB) {
     const b = parseFloat(numB);
 
     if(isNaN(a) || isNaN(b)) {
-        displayResult.textContent = 'OPERATOR ERROR: RESET AND TRY AGAIN';
+        displayResult.textContent = 'OPERATOR ERROR';
         activeError = true;
     }
     else {
@@ -32,9 +32,9 @@ function operate (op, numA, numB) {
                 resultValue = multiply(a, b);
                 displayResult.textContent = resultValue;
                 return;
-            case '/':
+            case '÷':
                 if(assessDBZ(b)){
-                    displayResult.textContent = 'DIVIDE BY ZERO ERROR: RESET AND TRY AGAIN';
+                    displayResult.textContent = 'DIVIDE BY ZERO ERROR';
                     activeError = true;      
                 }
                 else {
@@ -70,10 +70,10 @@ function injectValue (value){
     if(activeError == false) {
 
         // if we enter an operator
-        if(value == '+' || value == '-' || value == '*' || value == '/' ) {     
+        if(value == '+' || value == '-' || value == '*' || value == '÷' ) {     
             
             // if select an operator while there is an active operator - execute operate() to obtain value of 1st number set
-            if ( operator == '+' || operator == '-' || operator == '*' || operator == '/' ) {
+            if ( operator == '+' || operator == '-' || operator == '*' || operator == '÷' ) {
                 operate(operator, valueA, currentValue);
                 operator = value;
             }
