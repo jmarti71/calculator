@@ -4,90 +4,114 @@ const valueButtons = document.querySelectorAll('.valBtn');
 const equalBtn = document.querySelector('.equalsBtn');
 const allCearBtn = document.querySelector('.allClearBtn');
 
-var resultValue;
-var currentValue = '0';
-var valueA = 0;
-var operator = '';
+let activeError = false;
+let resultValue = '';
+let currentValue = '0';
+let valueA = 0;
+let operator = '';
 
 function operate (op, numA, numB) {
-    const a = parseInt(numA);
-    const b = parseInt(numB);
-    // use switch?
-    if(op == '+') {
-       resultValue = add (a, b);
-       displayResult.textContent = resultValue;
+    const a = parseFloat(numA);
+    const b = parseFloat(numB);
+
+    if(isNaN(a) || isNaN(b)) {
+        displayResult.textContent = 'OPERATOR ERROR: RESET AND TRY AGAIN';
+        activeError = true;
     }
-    else if (op == '-') {
-        resultValue = subtract(a, b);
-        displayResult.textContent = resultValue;
-    }
-    else if (op == '*') {
-        resultValue = multiply(a, b);
-        displayResult.textContent = resultValue;
-    }
-    else if (op == '/') {
-        resultValue = divide(a, b);
-        displayResult.textContent = resultValue;
-    }
-    //resets operator after calculation is processed
-    op = '';
+    else {
+        switch(op) {
+            case '+':
+                resultValue = add (a, b);
+                displayResult.textContent = resultValue;
+                return;
+            case '-':
+                resultValue = subtract(a, b);
+                displayResult.textContent = resultValue;
+                return;
+            case '*':
+                resultValue = multiply(a, b);
+                displayResult.textContent = resultValue;
+                return;
+            case '/':
+                if(assessDBZ(b)){
+                    displayResult.textContent = 'DIVIDE BY ZERO ERROR: RESET AND TRY AGAIN';
+                    activeError = true;      
+                }
+                else {
+                    resultValue = divide(a, b);        
+                    displayResult.textContent = resultValue;
+                }        
+                return;
+        }
+    }   
 }
 
 function add (a, b) {
     const addResult = a + b;
-    return addResult;
+    return roundResultResetOp(addResult);
 }
 
 function subtract (a, b) {
     const subResult = a - b;
-    return subResult;
+    return roundResultResetOp(subResult);
 }
 
 function multiply (a, b) {
     const multResult = a * b;
-    return multResult;
+    return roundResultResetOp(multResult);
 }
 
 function divide (a, b) {
     const divResult = a / b;
-    return divResult;
+    return roundResultResetOp(divResult);
 }
 
-// WORK HERE //
 function injectValue (value){
-    // if we are entering an operator
-    if(value == '+' || value == '-' || value == '*' || value == '/' ) {
-        
-        // if there is an active operator - get a result
-        if ( operator == '+' || operator == '-' || operator == '*' || operator == '/' ) {
-            operate(operator, valueA, currentValue);
-            operator = value;
-        }
+    if(activeError == false) {
 
-        //if a numeric result value has been obtained - set aValue to result and reset the current value
-        if(typeof(resultValue) == 'number') {
-            console.log("ran result");
-            valueA = resultValue; 
-            displayEntry.textContent = resultValue;
-            currentValue = ''; //reset
-            console.log(valueA);
-            operator = value;
-            resultValue == 0;    
+        // if we enter an operator
+        if(value == '+' || value == '-' || value == '*' || value == '/' ) {     
+            
+            // if select an operator while there is an active operator - execute operate() to obtain value of 1st number set
+            if ( operator == '+' || operator == '-' || operator == '*' || operator == '/' ) {
+                operate(operator, valueA, currentValue);
+                operator = value;
+            }
+   
+            // if adding to our previous result
+            if(typeof(resultValue) == 'number') {
+                console.log("ran result");
+                valueA = resultValue; 
+                displayEntry.textContent = resultValue;
+                currentValue = ''; //reset
+                console.log(valueA);
+                operator = value;
+                resultValue == 0;    
+            }
+            else {
+                valueA = currentValue;
+                console.log(valueA);
+                currentValue = ''; //reset
+                operator = value;
+                console.log(operator); //also an array?
+            }
         }
-        else {
-            valueA = currentValue;
-            console.log(valueA);
-            currentValue = ''; //reset
-            operator = value;
-            console.log(operator); //also an array?
-        }
+        // if we are entering a number
+        else if (!isNaN(value)) {
+            currentValue = currentValue + value;
+            console.log(currentValue);
+        }  
+        displayEntry.textContent = displayEntry.textContent + value;
     }
-    // if we are entering a number
-    else if (!isNaN(value)) {
-        currentValue = currentValue + value;
-        console.log(currentValue);
-    }  
-    displayEntry.textContent = displayEntry.textContent + value;
+}
+
+function roundResultResetOp (result) {
+    op = '';
+    return Math.round((result + Number.EPSILON) * 100000) / 100000;
+}
+
+function assessDBZ(number) {
+    if (number === 0) { return true; }
 }
 
 function clearAll () {
@@ -97,6 +121,7 @@ function clearAll () {
     currentValue = '0';
     valueA = 0;
     operator = '';
+    activeError = false;
 }
 
 allCearBtn.addEventListener('click', () => { clearAll() });
