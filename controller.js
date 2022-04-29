@@ -26,15 +26,15 @@ function operate (op, numA, numB) {
             case '+':
                 resultValue = add (a, b);
                 displayResult.textContent = resultValue;
-                return;
+                break;
             case '-':
                 resultValue = subtract(a, b);
                 displayResult.textContent = resultValue;
-                return;
+                break;
             case '*':
                 resultValue = multiply(a, b);
                 displayResult.textContent = resultValue;
-                return;
+                break;
             case '÷':
                 if(assessDBZ(b)){
                     displayResult.textContent = 'DIVIDE BY ZERO ERROR';
@@ -44,7 +44,7 @@ function operate (op, numA, numB) {
                     resultValue = divide(a, b);        
                     displayResult.textContent = resultValue;
                 }        
-                return;
+                break;
         }
     }   
 }
