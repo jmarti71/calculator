@@ -2,16 +2,17 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Minimalist Calculator</title>
+        <title>Adaptive Calculator</title>
         <script src="controller.js" defer></script>
         <link href="styles.css" rel="stylesheet">
     </head>
     <body>
-        <h1>Calculator</h1>
+        <h1>Adaptive Calculator</h1>
+        <h2>Screen will expand to the size of your number</h2>
         <div class="outer-cont">
             <div class="calculator-container">
                 <div class="display">
-                    <p class="displayEntry"> </p>
+                    <p class="displayEntry"></p>
                     <p class="displayResult"></p>
                 </div>
                 <div class="button-row">
@@ -33,10 +34,15 @@
                     <button class="valBtn singleBtn opBtn">-</button>
                 </div>
                 <div class="button-row">
-                    <button class="singleBtn allClearBtn">CLEAR</button>
+
+                    <button class="singleBtn negativeBtn">-/+</button>
                     <button class="valBtn singleBtn zeroBtn">0</button>
-                    <button class="singleBtn equalsBtn">=</button>
+                    <button class="singleBtn percentBtn">%</button>
                     <button class="valBtn singleBtn opBtn">+</button>
+                </div>
+                <div class="button-row">
+                    <button class="doubleBtn allClearBtn">CLEAR</button>  
+                    <button class="doubleBtn equalsBtn">=</button>            
                 </div>
             </div>
         </div>
