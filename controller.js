@@ -6,45 +6,44 @@ const allCearBtn = document.querySelector('.allClearBtn');
 const negativeBtn = document.querySelector('.negativeBtn');
 const percentBtn = document.querySelector('.percentBtn');
 
-let activeError = false;
+let errorPresent = false;
 let resultValue = '';
 let currentValue = '';
 let valueA = 0;
 let operator = '';
 
 function operate (op, numA, numB) {
-    if(numA ==''){numA = '0';}
+    if (numA =='') { numA = '0'; }
     const a = parseFloat(numA);
     const b = parseFloat(numB);
 
     if(isNaN(a) || isNaN(b)) {
         displayResult.textContent = 'OPERATOR ERROR';
-        activeError = true;
+        errorPresent = true;
     }
     else {
         switch(op) {
             case '+':
                 resultValue = add (a, b);
-                displayResult.textContent = resultValue;
                 break;
             case '-':
                 resultValue = subtract(a, b);
-                displayResult.textContent = resultValue;
                 break;
             case '*':
                 resultValue = multiply(a, b);
-                displayResult.textContent = resultValue;
                 break;
             case '÷':
                 if(assessDBZ(b)){
                     displayResult.textContent = 'DIVIDE BY ZERO ERROR';
-                    activeError = true;      
+                    errorPresent = true;      
                 }
                 else {
                     resultValue = divide(a, b);        
-                    displayResult.textContent = resultValue;
                 }        
                 break;
+        }
+        if(errorPresent == false){
+            displayResult.textContent = resultValue;
         }
     }   
 }
@@ -70,12 +69,12 @@ function divide (a, b) {
 }
 
 function injectValue (value){
-    if(activeError == false) {
-        // if value is operator
+    if(errorPresent == false) {
+        // if entered value is operator
         if(value == '+' || value == '-' || value == '*' || value == '÷' ) {     
             
-            // (string of numbers) if there is an active operator - execute operate() on number set & active operator 
-            // then set operator to new operator
+            // (string of numbers) if there is an active operator, execute operate() on number set & active operator 
+            // then set operator to new operator after getting result
             if ( operator == '+' || operator == '-' || operator == '*' || operator == '÷' ) {
                 operate(operator, valueA, currentValue);
                 operator = value;
@@ -83,39 +82,24 @@ function injectValue (value){
    
             // if adding to our previous result
             if(typeof(resultValue) == 'number') {
-                console.log("ran result");
                 valueA = resultValue;           
-                currentValue = ''; //reset
-                console.log(valueA);
-                operator = value;
                 resultValue = '';    
-                displayEntry.textContent = `${valueA}${operator}${currentValue}`;
             }
             else {
                 valueA = currentValue;
-                console.log(valueA);
-                currentValue = ''; //reset
-                operator = value;
-                console.log(operator); //also an array?
-                displayEntry.textContent = `${valueA}${operator}${currentValue}`;
             }
+            //reset to be operated on
+            currentValue = '';
+            operator = value;
+            displayEntry.textContent = `${valueA}${operator}${currentValue}`;
         }
 
-        // if value is number
+        // if entered value is number
         else if (!isNaN(value)) {
             // if entering number after result, clear and proceed
-            if(typeof(resultValue) == 'number'){
-                clearAll();
-            }
+            if(typeof(resultValue) == 'number'){ clearAll(); }
             currentValue = currentValue + value;
-            console.log(currentValue);
-            if(operator !== ''){
-                displayEntry.textContent = `${valueA}${operator}${currentValue}`;
-            }
-            else {
-                displayEntry.textContent = currentValue;
-            }
-            console.log(currentValue);          
+            displayEntryHelper();  
         }  
     }
 }
@@ -125,13 +109,14 @@ function percentOperation() {
         // if operating on result
         if(typeof(resultValue) == 'number') {
             currentValue = resultValue.toString();
-            resultValue = '';           
-            displayEntry.textContent = `${currentValue}`;          
+            resultValue = '';                    
         } 
+        
         displayEntry.textContent = `${currentValue}%`;
         currentValue = parseFloat(currentValue) / 100;
         currentValue = Math.round((currentValue + Number.EPSILON) * 100000) / 100000;
         currentValue = currentValue.toString();
+       
         if(operator !== ''){
             displayEntry.textContent = `${valueA}${operator}${currentValue}`;
         }
@@ -142,29 +127,21 @@ function percentOperation() {
 }
 
 function toggleNegative () {
-    // toggle the result
+    // if result, toggle the result
     if(typeof(resultValue) == 'number') {
         currentValue = (resultValue * (-1)).toString();
         resultValue = '';           
         displayEntry.textContent = `${currentValue}`;          
     } 
     else {
-        // toggle non-result
+        // if not result, toggle non-result
         if(currentValue.charAt(0) !== '-') {
             currentValue = '-'.concat(currentValue);
         }
         else if (currentValue.charAt(0) == '-') {
-            console.log('neg detected');
             currentValue = currentValue.substring(1);
         }
-
-        // display based on operator status
-        if(operator !== ''){
-            displayEntry.textContent = `${valueA}${operator}${currentValue}`;
-        }
-        else {
-            displayEntry.textContent = currentValue;
-        }
+        displayEntryHelper();
     }
 }
 
@@ -177,6 +154,16 @@ function assessDBZ(number) {
     if (number === 0) { return true; }
 }
 
+//if operator has been entered, display values with operator
+function displayEntryHelper() {
+    if(operator !== ''){
+        displayEntry.textContent = `${valueA}${operator}${currentValue}`;
+    }
+    else {
+        displayEntry.textContent = currentValue;
+    }
+}
+
 function clearAll () {
     displayEntry.textContent = '';
     displayResult.textContent = '';
@@ -184,7 +171,7 @@ function clearAll () {
     currentValue = '';
     valueA = 0;
     operator = '';
-    activeError = false;
+    errorPresent = false;
 }
 
 negativeBtn.addEventListener('click', () =>  { toggleNegative() });
