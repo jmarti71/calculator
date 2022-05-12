@@ -1,4 +1,5 @@
 # Adaptive Calculator
+Check it out: https://jmarti71.github.io/calculator/
 
 ## Overview
 Adaptive Calculator is an interactive webpage where users can operate a functional calculator. This webpage is made with HTML, CSS and JavaScript. Adaptive calculator gets its name from the feature that allows the calculator screen to extend if users enter a large number.
